@@ -1,0 +1,17 @@
+{
+  "name": "cs-546-lab5",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^3.3.0",
+    "axios": "^0.25.0"
+  },
+  "author": "Adefemi Fagbewesa 10439840",
+  "license": "ISC"
+}
