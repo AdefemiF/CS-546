@@ -1,7 +1,7 @@
-const mongoCollections = require('./mongoCollections');
+const mongoCollections = require('../configs/mongoCollections');
 const bands = mongoCollections.bands;
 let ObjectId = require('mongodb').ObjectId;
-let moment = require("moment")
+//let moment = require("moment")
 
 
 async function create(name, genre,website,recordLabel,bandMembers,yearFormed){
@@ -33,9 +33,6 @@ async function create(name, genre,website,recordLabel,bandMembers,yearFormed){
 async function getAll(){
     let bandCollection = await bands();
     let allBands = await bandCollection.find({}).toArray();
-    allBands.forEach(object => {
-        object._id = object._id.toString();
-    })
     return allBands
 }
 
@@ -84,7 +81,9 @@ async function update(id, name, genre,website,recordLabel,bandMembers,yearFormed
         yearFormed: yearFormed
     }
     let updatedInfo = await bandCollection.updateOne({ _id:ObjectId(id)}, {$set: updateBand})
+    if (!updatedInfo) throw "band does not exist"
     if (updatedInfo.modifiedCount === 0) throw "could not update band succssfully"
     return await get(id)
 
 }
+module.exports ={create,get,update,remove,getAll}

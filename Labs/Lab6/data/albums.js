@@ -20,17 +20,24 @@ async function create(bandId,title,releaseDate,tracks,rating){
 
     if (typeof(rating) != "number" || rating<1 || rating>5) throw "rating must be a number and must be between 1 and 5!";
 
-    let bandCollection = await bands();
-    let specifiedBand = await bandCollection.findOne({_id:ObjectId(bandId)})
-    if (specifiedBand ===null) throw "No band with that specific id"
-
+    let albumCollection = await albums();
     let newAlbum = {
         title:title, 
         releaseDate:releaseDate,
         tracks:tracks, 
         rating:rating
     } 
+    let albumInsertInfo = await albumCollection.insertOne(newAlbum)
+    if (albumInsertInfo.insertedCount===0) throw "Could not add album to band";
 
+
+    let bandCollection = await bands();
+    let specifiedBand = await bandCollection.findOne({_id:ObjectId(bandId)})
+    if (specifiedBand ===null) throw "No band with that specific id"
+
+    //specifiedBand.albums.push(newAlbum)
+    //specifiedBand.overallRating = ((specifiedBand.overallRating + newAlbum.rating)/specifiedBand.albums.length).toFixed(1)
+    newAlbum._id = albumInsertInfo._id
     return newAlbum;
 }
 
@@ -52,7 +59,7 @@ async function get(albumId){
     let specifiedBand = await bandCollection.findOne({"albums._id": ObjectId(albumId)})
     if (specifiedBand ===null) throw "No band with that specific id"
     for (album in specifiedBand.albums){
-        if (album._id === albumId) return specifiedBand;
+        if (album._id.toString() === albumId.toString()) return specifiedBand;
     }
     throw "No Album with that specific id was found"
 }
@@ -65,6 +72,14 @@ async function remove(albumId){
     let albumCollection = await albums();
     let specifiedBand = await albumCollection.deleteOne({_id: ObjectId(albumId)})
     if (specifiedBand===null||deleteInfo.deletedCount===0) throw "couldnt delete band with given id";
+
+    specifiedBand.albums = specifiedBand.albums.filter(x=>{
+        if (x._id)
+    })
+    specifiedBand.overallRating = ((specifiedBand.overallRating + newAlbum.rating)/specifiedBand.albums.length).toFixed(1)
+
     return get(albumId)
 }
 
+
+module.exports ={remove, get, getAll,create}
