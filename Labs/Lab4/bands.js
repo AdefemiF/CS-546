@@ -19,7 +19,7 @@ async function create(name, genre,website,recordLabel,bandMembers,yearFormed){
         website: website,
         recordLabel: recordLabel,
         bandMembers: bandMembers,
-        yearsFormed: yearFormed
+        yearFormed: yearFormed
     }
     let bandInsertInfo = await bandCollection.insertOne(newBand)
     if (bandInsertInfo.insertedCount===0) throw "Could not add band";
