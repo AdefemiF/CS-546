@@ -96,6 +96,19 @@ module.exports = router
     "albums": [],
     "overallRating": 0
  }
+
+ {
+    "title": "Wish You Were Here",
+  "releaseDate": "09/12/1975",
+  "tracks": [
+        "Shine On You Crazy Diamond, Pts. 1-5",
+        "Welcome to the Machine",
+        "Have a Cigar (Ft. Roy Harper)",
+        "Wish You Were Here",
+        "Shine On You Crazy Diamond, Pts. 6-9"
+    ],
+  "rating": 5
+}
  * 
  * 
  * 

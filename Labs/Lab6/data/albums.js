@@ -28,17 +28,14 @@ async function create(bandId,title,releaseDate,tracks,rating){
         rating:rating
     } 
     let albumInsertInfo = await albumCollection.insertOne(newAlbum)
-    if (albumInsertInfo.insertedCount===0) throw "Could not add album to band";
-
-
+    if (albumInsertInfo.insertedCount===0) throw "Could not add album";
+    newAlbum = await get(albumInsertInfo.insertedId)
     let bandCollection = await bands();
     let specifiedBand = await bandCollection.findOne({_id:ObjectId(bandId)})
     if (specifiedBand ===null) throw "No band with that specific id"
-
-    //specifiedBand.albums.push(newAlbum)
-    //specifiedBand.overallRating = ((specifiedBand.overallRating + newAlbum.rating)/specifiedBand.albums.length).toFixed(1)
-    newAlbum._id = albumInsertInfo._id
-    return newAlbum;
+    specifiedBand.albums.push(newAlbum)
+    specifiedBand.overallRating = ((specifiedBand.overallRating + newAlbum.rating)/specifiedBand.albums.length).toFixed(1)
+    return newAlbum
 }
 
 async function getAll(bandId){
@@ -70,15 +67,18 @@ async function remove(albumId){
     if (!ObjectId.isValid(albumId)) throw "albumId must be a valid object id";
     if (id.replace(/\s/g, '')=="") throw "albumId cannot be an empty string";
     let albumCollection = await albums();
-    let specifiedBand = await albumCollection.deleteOne({_id: ObjectId(albumId)})
-    if (specifiedBand===null||deleteInfo.deletedCount===0) throw "couldnt delete band with given id";
+    let albumspecificed = await albumCollection.deleteOne({_id: ObjectId(albumId)})
+    if (albumspecificed===null||deleteInfo.deletedCount===0) throw "couldnt delete band with given id";
 
+    let bandCollection = await bands();
+    let specifiedBand = await bandCollection.findOne({"albums._id": ObjectId(albumId)})
+    
     specifiedBand.albums = specifiedBand.albums.filter(x=>{
-        if (x._id)
+        if (x._id.toString()!=albumId.toString()) return x
     })
     specifiedBand.overallRating = ((specifiedBand.overallRating + newAlbum.rating)/specifiedBand.albums.length).toFixed(1)
 
-    return get(albumId)
+    return specifiedBand
 }
 
 
