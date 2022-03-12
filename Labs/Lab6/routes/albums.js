@@ -20,7 +20,7 @@ router.post('/:id', async (req, res) => {
     try{        
         if (!req.body.title || !req.body.releaseDate|| !req.body.tracks || !req.body.bandId || !req.body.rating) return res.status(400).json({ error: "Fill all fields!" });
         let results = await albumCollections.create(
-            req.body.bandId,
+            req.params.id,
             req.body.title,
             req.body.releaseDate,
             req.body.tracks,
